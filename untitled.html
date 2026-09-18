@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tu Tienda Perú — Productos de Calidad</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        :root {
+            --primario: #2563eb;
+            --secundario: #f97316;
+            --fondo: #f8fafc;
+            --texto: #1e293b;
+            --blanco: #ffffff;
+            --sombra: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        body { background: var(--fondo); color: var(--texto); line-height: 1.6; }
+        
+        nav { background: var(--blanco); padding: 1rem 5%; box-shadow: var(--sombra); position: sticky; top: 0; z-index: 100; }
+        .nav-contenido { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.5rem; font-weight: bold; color: var(--primario); }
+        .enlaces a { margin-left: 2rem; text-decoration: none; color: var(--texto); font-weight: 500; }
+        .enlaces a:hover { color: var(--primario); }
+        .carrito-icono { cursor: pointer; font-size: 1.2rem; background: var(--primario); color: white; padding: 0.5rem 1rem; border-radius: 8px; }
+
+        .cabecera { background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: white; padding: 4rem 5%; text-align: center; }
+        .cabecera h1 { font-size: 2.5rem; margin-bottom: 1rem; }
+        .cabecera p { font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.9; }
+        .boton { display: inline-block; background: var(--secundario); color: white; padding: 0.8rem 2rem; border-radius: 8px; text-decoration: none; font-weight: bold; border: none; cursor: pointer; transition: transform 0.2s; }
+        .boton:hover { transform: translateY(-2px); }
+
+        .contenedor { max-width: 1200px; margin: 3rem auto; padding: 0 5%; }
+        .titulo-seccion { text-align: center; font-size: 2rem; margin-bottom: 2rem; color: var(--texto); }
+        .cuadricula { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; }
+        .tarjeta-producto { background: white; border-radius: 12px; overflow: hidden; box-shadow: var(--sombra); transition: transform 0.3s; }
+        .tarjeta-producto:hover { transform: translateY(-5px); }
+        .imagen-producto { height: 200px; background: #e2e8f0; display: flex; align-items: center; justify-content: center; font-size: 3rem; }
+        .info-producto { padding: 1.2rem; }
+        .nombre { font-weight: bold; font-size: 1.1rem; margin-bottom: 0.5rem; }
+        .precio { color: var(--primario); font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem; }
+        .btn-agregar { width: 100%; background: var(--primario); color: white; border: none; padding: 0.7rem; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .btn-agregar:hover { background: #1d4ed8; }
+
+        .modal { display: none; position: fixed; top: 0; right: 0; width: 100%; max-width: 400px; height: 100%; background: white; box-shadow: -4px 0 20px rgba(0,0,0,0.15); z-index: 200; padding: 2rem; overflow-y: auto; }
+        .modal.activo { display: block; }
+        .cerrar { float: right; font-size: 1.5rem; cursor: pointer; color: #64748b; }
+        .item-carrito { display: flex; justify-content: space-between; padding: 1rem 0; border-bottom: 1px solid #e2e8f0; }
+        .total { margin-top: 1.5rem; font-size: 1.3rem; font-weight: bold; text-align: right; }
+        .btn-pagar { width: 100%; margin-top: 1rem; background: #16a34a; }
+
+        footer { background: #1e293b; color: white; padding: 3rem 5%; margin-top: 4rem; }
+        .pie-contenido { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; }
+        .pie h3 { margin-bottom: 1rem; color: #94a3b8; }
+        .pie a { color: #cbd5e1; text-decoration: none; display: block; margin-bottom: 0.5rem; }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="nav-contenido">
+        <div class="logo">🛒 Tu Tienda Perú</div>
+        <div class="enlaces">
+            <a href="#inicio">Inicio</a>
+            <a href="#productos">Productos</a>
+            <a href="#contacto">Contacto</a>
+            <span class="carrito-icono" onclick="abrirCarrito()">🛒 <span id="cantidad">0</span></span>
+        </div>
+    </div>
+</nav>
+
+<section class="cabecera" id="inicio">
+    <h1>Los mejores productos, directo a tu puerta 📦</h1>
+    <p>Envíos a todo Lima y provincias · Pago seguro con Yape, Plin o transferencia</p>
+    <a href="#productos" class="boton">Ver Productos</a>
+</section>
+
+<section class="contenedor" id="productos">
+    <h2 class="titulo-seccion">Nuestros Productos</h2>
+    <div class="cuadricula" id="lista-productos"></div>
+</section>
+
+<section class="contenedor" id="contacto">
+    <h2 class="titulo-seccion">Contáctanos</h2>
+    <div style="max-width: 600px; margin: 0 auto; background: white; padding: 2rem; border-radius: 12px; box-shadow: var(--sombra);">
+        <p><strong>📍 Ubicación:</strong> Lima, Perú</p>
+        <p><strong>📱 WhatsApp:</strong> +51 9XX XXX XXX</p>
+        <p><strong>📧 Correo:</strong> ventas@tutiendaperu.pe</p>
+        <p><strong>💳 Pagos:</strong> Yape / Plin / Transferencia Bancaria</p>
+    </div>
+</section>
+
+<footer>
+    <div class="pie-contenido">
+        <div class="pie">
+            <h3>Enlaces</h3>
+            <a href="#inicio">Inicio</a>
+            <a href="#productos">Productos</a>
+            <a href="#contacto">Contacto</a>
+        </div>
+        <div class="pie">
+            <h3>Métodos de Pago</h3>
+            <a href="#">Yape</a>
+            <a href="#">Plin</a>
+            <a href="#">Transferencia</a>
+            <a href="#">Efectivo</a>
+        </div>
+        <div class="pie">
+            <h3>Envíos</h3>
+            <a href="#">Lima Metropolitana</a>
+            <a href="#">Todo el Perú</a>
+            <a href="#">Tiempos de entrega</a>
+        </div>
+    </div>
+</footer>
+
+<div class="modal" id="carrito">
+    <span class="cerrar" onclick="cerrarCarrito()">&times;</span>
+    <h2>Tu Carrito 🛒</h2>
+    <div id="contenido-carrito"></div>
+    <div class="total">Total: S/ <span id="total">0.00</span></div>
+    <button class="boton btn-pagar" onclick="pagar()">Proceder al Pago</button>
+</div>
+
+<script>
+    const productos = [
+        { id: 1, nombre: "Producto 1", precio: 49.90, emoji: "📦" },
+        { id: 2, nombre: "Producto 2", precio: 89.50, emoji: "👕" },
+        { id: 3, nombre: "Producto 3", precio: 35.00, emoji: "📱" },
+        { id: 4, nombre: "Producto 4", precio: 120.00, emoji: "🎒" },
+        { id: 5, nombre: "Producto 5", precio: 15.90, emoji: "✏️" },
+        { id: 6, nombre: "Producto 6", precio: 75.00, emoji: "🏠" }
+    ];
+
+    let carrito = [];
+
+    function cargarProductos() {
+        const contenedor = document.getElementById('lista-productos');
+        contenedor.innerHTML = productos.map(p => `
+            <div class="tarjeta-producto">
+                <div class="imagen-producto">${p.emoji}</div>
+                <div class="info-producto">
+                    <div class="nombre">${p.nombre}</div>
+                    <div class="precio">S/ ${p.precio.toFixed(2)}</div>
+                    <button class="btn-agregar" onclick="agregarAlCarrito(${p.id})">Agregar al carrito</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function agregarAlCarrito(id) {
+        const producto = productos.find(p => p.id === id);
+        carrito.push(producto);
+        actualizarCarrito();
+        alert(`${producto.nombre} agregado 🛒`);
+    }
+
+    function actualizarCarrito() {
+        document.getElementById('cantidad').textContent = carrito.length;
+        const contenido = document.getElementById('contenido-carrito');
+        if (carrito.length === 0) {
+            contenido.innerHTML = "<p>Tu carrito está vacío</p>";
+        } else {
+            contenido.innerHTML = carrito.map((item, i) => `
+                <div class="item-carrito">
+                    <div>${item.emoji} ${item.nombre}</div>
+                    <div>S/ ${item.precio.toFixed(2)} <button onclick="quitarDelCarrito(${i})" style="border:none; background:none; color:red; cursor:pointer;">✕</button></div>
+                </div>
+            `).join('');
+        }
+        const total = carrito.reduce((sum, i) => sum + i.precio, 0);
+        document.getElementById('total').textContent = total.toFixed(2);
+    }
+
+    function quitarDelCarrito(indice) {
+        carrito.splice(indice, 1);
+        actualizarCarrito();
+    }
+
+    function abrirCarrito() {
+        document.getElementById('carrito').classList.add('activo');
+    }
+
+    function cerrarCarrito() {
+        document.getElementById('carrito').classList.remove('activo');
+    }
+
+    function pagar() {
+        if (carrito.length === 0) {
+            alert('El carrito está vacío');
+            return;
+        }
+        const total = carrito.reduce((sum, i) => sum + i.precio, 0).toFixed(2);
+        alert(`✅ Total a pagar: S/ ${total}\n\n📌 Para pagar, envía comprobante por WhatsApp o paga con Yape al número:\n+51 9XX XXX XXX\n\n¡Gracias por tu compra! 🎉`);
+        carrito = [];
+        actualizarCarrito();
+        cerrarCarrito();
+    }
+
+    cargarProductos();
+</script>
+</body>
+</html>
